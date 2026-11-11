@@ -1,3 +1,12 @@
+from contextlib import closing
+
+from app.config import get_settings
+from app.db import connect, init_db
+from app.rag.core import ask
+
+
 def answer_question(question: str) -> dict:
-    """TEMPORARY stub. Real RAG core function ah inga call pannanum."""
-    return {"answer": f"Stub answer for: {question}", "sources": []}
+    # Ovvoru request ku thani DB connection. Mudinjadhum close aagum.
+    with closing(connect(get_settings().database_url)) as conn:
+        init_db(conn)
+        return ask(conn, question)
